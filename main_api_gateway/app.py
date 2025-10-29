@@ -1,30 +1,45 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, Form
 import requests
 
 app = FastAPI(title="Priacc AI Microservices Gateway")
 
-# Base URLs for your microservices
+# Microservice endpoints
 RESUME_PARSER_URL = "http://127.0.0.1:8001"
 INVOICE_OCR_URL = "http://127.0.0.1:8002"
 EMAIL_SUMMARIZER_URL = "http://127.0.0.1:8003"
 
 @app.get("/")
 def home():
-    return {"message": "Main API Gateway running successfully."}
+    return {"message": "Priacc AI Gateway is running successfully."}
 
+# -------------------- RESUME PARSER --------------------
 @app.post("/resume-parser/")
-def parse_resume(file: bytes):
-    files = {"file": ("resume.pdf", file)}
-    response = requests.post(f"{RESUME_PARSER_URL}/parse_resume", files=files)
-    return response.json()
+async def parse_resume(file: UploadFile = File(...)):
+    try:
+        files = {"file": (file.filename, await file.read(), file.content_type)}
+        response = requests.post(f"{RESUME_PARSER_URL}/parse_resume", files=files)
+        return response.json()
+    except Exception as e:
+        return {"error": f"Failed to connect to Resume Parser: {e}"}
 
+# -------------------- INVOICE OCR --------------------
 @app.post("/invoice-ocr/")
-def extract_invoice(file: bytes):
-    files = {"file": ("invoice.png", file)}
-    response = requests.post(f"{INVOICE_OCR_URL}/extract_text", files=files)
-    return response.json()
+async def extract_invoice(file: UploadFile = File(...)):
+    try:
+        files = {"file": (file.filename, await file.read(), file.content_type)}
+        response = requests.post(f"{INVOICE_OCR_URL}/extract_invoice", files=files)
+        return response.json()
+    except Exception as e:
+        return {"error": f"Failed to connect to Invoice OCR: {e}"}
 
+# -------------------- EMAIL SUMMARIZER --------------------
 @app.post("/email-summary/")
-def summarize_email(text: str):
-    response = requests.post(f"{EMAIL_SUMMARIZER_URL}/summarize", json={"text": text})
-    return response.json()
+def summarize_email(text: str = Form(...)):
+    try:
+        response = requests.post(
+            f"{EMAIL_SUMMARIZER_URL}/summarize", 
+            json={"email_text": text}
+        )
+        return response.json()
+    except Exception as e:
+        return {"error": f"Failed to connect to Email Summarizer: {e}"}
