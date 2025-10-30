@@ -8,7 +8,7 @@ RESUME_PARSER_URL = "http://127.0.0.1:8001"
 INVOICE_OCR_URL = "http://127.0.0.1:8002"
 EMAIL_SUMMARIZER_URL = "http://127.0.0.1:8003"
 
-@app.get("/")
+@app.get("/AI")
 def home():
     return {"message": "Priacc AI Gateway is running successfully."}
 
