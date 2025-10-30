@@ -8,7 +8,7 @@ This project contains 3 FastAPI-based AI microservices:
 ##  Run Individually
 # Run Invoice OCR
 cd invoice_ocr_service
-uvicorn app:app --reload --port 8000
+uvicorn app:app --reload --port 8002
 
 # Run Resume Parser
 cd resume_parser_service
@@ -16,12 +16,12 @@ uvicorn app:app --reload --port 8001
 
 # Run Email Summarizer
 cd email_summarizer_service
-uvicorn app:app --reload --port 8002
+uvicorn app:app --reload --port 8003
 
 ## Run All Together (Docker)
 docker-compose up --build
 
 ## API URLs
-- Invoice OCR: http://localhost:8000/docs
+- Invoice OCR: http://localhost:8002/docs
 - Resume Parser: http://localhost:8001/docs
-- Email Summarizer: http://localhost:8002/docs
+- Email Summarizer: http://localhost:8003/docs
